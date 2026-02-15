@@ -1,0 +1,10 @@
+.git
+.gitignore
+.golangci.yml
+.idea
+.vscode
+*.md
+url-shortener
+docker-compose.yml
+Dockerfile
+Makefile
