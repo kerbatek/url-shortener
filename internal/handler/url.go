@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/kerbatek/url-shortener/internal/service"
@@ -16,16 +17,46 @@ func NewURLHandler(service *service.URLService) *URLHandler {
 }
 
 func (h *URLHandler) ShortenURL(c *gin.Context) {
-	// TODO: parse request body, call service.Shorten, return JSON response
-	c.JSON(http.StatusNotImplemented, gin.H{"error": "not implemented"})
+	var req struct {
+		URL string `json:"url" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "url is required"})
+		return
+	}
+
+	url, err := h.service.Shorten(c.Request.Context(), req.URL)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, url)
 }
 
 func (h *URLHandler) RedirectURL(c *gin.Context) {
-	// TODO: extract code param, call service.Resolve, redirect
-	c.JSON(http.StatusNotImplemented, gin.H{"error": "not implemented"})
+	code := c.Param("code")
+
+	url, err := h.service.Resolve(c.Request.Context(), code)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "short url not found"})
+		return
+	}
+
+	c.Redirect(http.StatusFound, url.OriginalURL)
 }
 
 func (h *URLHandler) DeleteURL(c *gin.Context) {
-	// TODO: extract ID param, call service.Delete, return status
-	c.JSON(http.StatusNotImplemented, gin.H{"error": "not implemented"})
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+
+	if err := h.service.Delete(c.Request.Context(), id); err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "url not found"})
+		return
+	}
+
+	c.Status(http.StatusNoContent)
 }

@@ -6,4 +6,4 @@ CREATE TABLE IF NOT EXISTS urls (
     updated_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_urls_code ON urls (code);
+CREATE INDEX IF NOT EXISTS idx_urls_code ON urls (code);
