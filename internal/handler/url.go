@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
+
 	"github.com/kerbatek/url-shortener/internal/service"
 )
 
@@ -41,6 +43,12 @@ func (h *URLHandler) RedirectURL(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "short url not found"})
 		return
 	}
+
+	log.Info().
+		Str("short_code", code).
+		Str("original_url", url.OriginalURL).
+		Str("ip", c.ClientIP()).
+		Msg("redirect")
 
 	c.Redirect(http.StatusFound, url.OriginalURL)
 }
