@@ -16,6 +16,7 @@ WORKDIR /app
 
 COPY --from=builder /build/server ./server
 COPY migrations/ ./migrations/
+COPY static/ ./static/
 
 EXPOSE 8080
 
