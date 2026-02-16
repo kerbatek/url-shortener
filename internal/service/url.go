@@ -60,6 +60,6 @@ func (s *URLService) Resolve(ctx context.Context, code string) (*model.URL, erro
 	return s.repo.GetByCode(ctx, code)
 }
 
-func (s *URLService) Delete(ctx context.Context, id int64) error {
+func (s *URLService) Delete(ctx context.Context, id string) error {
 	return s.repo.Delete(ctx, id)
 }

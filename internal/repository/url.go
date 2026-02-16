@@ -11,8 +11,8 @@ import (
 type URLRepository interface {
 	Create(ctx context.Context, url *model.URL) error
 	GetByCode(ctx context.Context, code string) (*model.URL, error)
-	GetByID(ctx context.Context, id int64) (*model.URL, error)
-	Delete(ctx context.Context, id int64) error
+	GetByID(ctx context.Context, id string) (*model.URL, error)
+	Delete(ctx context.Context, id string) error
 }
 
 type postgresURLRepository struct {
@@ -42,7 +42,7 @@ func (r *postgresURLRepository) GetByCode(ctx context.Context, code string) (*mo
 	return &url, nil
 }
 
-func (r *postgresURLRepository) GetByID(ctx context.Context, id int64) (*model.URL, error) {
+func (r *postgresURLRepository) GetByID(ctx context.Context, id string) (*model.URL, error) {
 	var url model.URL
 	err := r.pool.QueryRow(ctx,
 		"SELECT id, code, original_url, created_at, updated_at FROM urls WHERE id = $1",
@@ -54,13 +54,13 @@ func (r *postgresURLRepository) GetByID(ctx context.Context, id int64) (*model.U
 	return &url, nil
 }
 
-func (r *postgresURLRepository) Delete(ctx context.Context, id int64) error {
+func (r *postgresURLRepository) Delete(ctx context.Context, id string) error {
 	result, err := r.pool.Exec(ctx, "DELETE FROM urls WHERE id = $1", id)
 	if err != nil {
 		return err
 	}
 	if result.RowsAffected() == 0 {
-		return fmt.Errorf("url with id %d not found", id)
+		return fmt.Errorf("url with id %s not found", id)
 	}
 	return nil
 }

@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/kerbatek/url-shortener/internal/service"
@@ -47,8 +46,8 @@ func (h *URLHandler) RedirectURL(c *gin.Context) {
 }
 
 func (h *URLHandler) DeleteURL(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
-	if err != nil {
+	id := c.Param("id")
+	if id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
 		return
 	}

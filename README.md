@@ -31,7 +31,7 @@ curl -X POST http://localhost:8080/shorten \
 ### Delete a URL
 
 ```bash
-curl -X DELETE http://localhost:8080/url/1
+curl -X DELETE http://localhost:8080/url/550e8400-e29b-41d4-a716-446655440000
 ```
 
 ## Running

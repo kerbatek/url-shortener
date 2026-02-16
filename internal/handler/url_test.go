@@ -43,7 +43,7 @@ func TestShortenURL_Success(t *testing.T) {
 	mockRepo.EXPECT().
 		Create(gomock.Any(), gomock.Any()).
 		DoAndReturn(func(ctx context.Context, u *model.URL) error {
-			u.ID = 1
+			u.ID = "550e8400-e29b-41d4-a716-446655440000"
 			u.CreatedAt = time.Now()
 			u.UpdatedAt = time.Now()
 			return nil
@@ -64,8 +64,8 @@ func TestShortenURL_Success(t *testing.T) {
 	if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
 		t.Fatalf("failed to parse response: %v", err)
 	}
-	if resp.ID != 1 {
-		t.Errorf("expected ID 1, got %d", resp.ID)
+	if resp.ID != "550e8400-e29b-41d4-a716-446655440000" {
+		t.Errorf("expected ID 550e8400-e29b-41d4-a716-446655440000, got %s", resp.ID)
 	}
 	if resp.OriginalURL != "https://example.com" {
 		t.Errorf("expected original URL https://example.com, got %s", resp.OriginalURL)
@@ -137,7 +137,7 @@ func TestRedirectURL_Success(t *testing.T) {
 	mockRepo.EXPECT().
 		GetByCode(gomock.Any(), "abc1234").
 		Return(&model.URL{
-			ID:          1,
+			ID:          "550e8400-e29b-41d4-a716-446655440000",
 			Code:        "abc1234",
 			OriginalURL: "https://example.com",
 		}, nil)
@@ -183,10 +183,10 @@ func TestDeleteURL_Success(t *testing.T) {
 	router, mockRepo := setupRouter(ctrl)
 
 	mockRepo.EXPECT().
-		Delete(gomock.Any(), int64(1)).
+		Delete(gomock.Any(), "550e8400-e29b-41d4-a716-446655440000").
 		Return(nil)
 
-	req := httptest.NewRequest(http.MethodDelete, "/url/1", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/url/550e8400-e29b-41d4-a716-446655440000", nil)
 	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)
@@ -203,10 +203,10 @@ func TestDeleteURL_NotFound(t *testing.T) {
 	router, mockRepo := setupRouter(ctrl)
 
 	mockRepo.EXPECT().
-		Delete(gomock.Any(), int64(999)).
-		Return(fmt.Errorf("url with id 999 not found"))
+		Delete(gomock.Any(), "00000000-0000-0000-0000-000000000000").
+		Return(fmt.Errorf("url with id 00000000-0000-0000-0000-000000000000 not found"))
 
-	req := httptest.NewRequest(http.MethodDelete, "/url/999", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/url/00000000-0000-0000-0000-000000000000", nil)
 	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)
@@ -220,14 +220,18 @@ func TestDeleteURL_InvalidID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	router, _ := setupRouter(ctrl)
+	router, mockRepo := setupRouter(ctrl)
+
+	mockRepo.EXPECT().
+		Delete(gomock.Any(), "abc").
+		Return(fmt.Errorf("invalid uuid"))
 
 	req := httptest.NewRequest(http.MethodDelete, "/url/abc", nil)
 	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)
 
-	if w.Code != http.StatusBadRequest {
-		t.Errorf("expected status 400, got %d", w.Code)
+	if w.Code != http.StatusNotFound {
+		t.Errorf("expected status 404, got %d", w.Code)
 	}
 }

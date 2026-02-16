@@ -21,7 +21,7 @@ func TestShorten_Success(t *testing.T) {
 	mockRepo.EXPECT().
 		Create(gomock.Any(), gomock.Any()).
 		DoAndReturn(func(ctx context.Context, u *model.URL) error {
-			u.ID = 1
+			u.ID = "550e8400-e29b-41d4-a716-446655440000"
 			u.CreatedAt = time.Now()
 			u.UpdatedAt = time.Now()
 			return nil
@@ -37,8 +37,8 @@ func TestShorten_Success(t *testing.T) {
 	if len(result.Code) != codeLength {
 		t.Errorf("expected code length %d, got %d", codeLength, len(result.Code))
 	}
-	if result.ID != 1 {
-		t.Errorf("expected ID 1, got %d", result.ID)
+	if result.ID != "550e8400-e29b-41d4-a716-446655440000" {
+		t.Errorf("expected ID 550e8400-e29b-41d4-a716-446655440000, got %s", result.ID)
 	}
 }
 
@@ -80,7 +80,7 @@ func TestResolve_Success(t *testing.T) {
 	svc := NewURLService(mockRepo)
 
 	expected := &model.URL{
-		ID:          1,
+		ID:          "550e8400-e29b-41d4-a716-446655440000",
 		Code:        "abc1234",
 		OriginalURL: "https://example.com",
 	}
@@ -123,10 +123,10 @@ func TestDelete_Success(t *testing.T) {
 	svc := NewURLService(mockRepo)
 
 	mockRepo.EXPECT().
-		Delete(gomock.Any(), int64(1)).
+		Delete(gomock.Any(), "550e8400-e29b-41d4-a716-446655440000").
 		Return(nil)
 
-	err := svc.Delete(context.Background(), 1)
+	err := svc.Delete(context.Background(), "550e8400-e29b-41d4-a716-446655440000")
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
@@ -140,10 +140,10 @@ func TestDelete_NotFound(t *testing.T) {
 	svc := NewURLService(mockRepo)
 
 	mockRepo.EXPECT().
-		Delete(gomock.Any(), int64(999)).
-		Return(fmt.Errorf("url with id 999 not found"))
+		Delete(gomock.Any(), "00000000-0000-0000-0000-000000000000").
+		Return(fmt.Errorf("url with id 00000000-0000-0000-0000-000000000000 not found"))
 
-	err := svc.Delete(context.Background(), 999)
+	err := svc.Delete(context.Background(), "00000000-0000-0000-0000-000000000000")
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}
