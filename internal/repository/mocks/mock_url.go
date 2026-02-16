@@ -56,7 +56,7 @@ func (mr *MockURLRepositoryMockRecorder) Create(ctx, url any) *gomock.Call {
 }
 
 // Delete mocks base method.
-func (m *MockURLRepository) Delete(ctx context.Context, id int64) error {
+func (m *MockURLRepository) Delete(ctx context.Context, id string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Delete", ctx, id)
 	ret0, _ := ret[0].(error)
@@ -85,7 +85,7 @@ func (mr *MockURLRepositoryMockRecorder) GetByCode(ctx, code any) *gomock.Call {
 }
 
 // GetByID mocks base method.
-func (m *MockURLRepository) GetByID(ctx context.Context, id int64) (*model.URL, error) {
+func (m *MockURLRepository) GetByID(ctx context.Context, id string) (*model.URL, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByID", ctx, id)
 	ret0, _ := ret[0].(*model.URL)

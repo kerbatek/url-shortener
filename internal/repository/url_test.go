@@ -29,7 +29,7 @@ func TestMain(m *testing.M) {
 	// Run migrations
 	_, err = testPool.Exec(ctx, `
 		CREATE TABLE IF NOT EXISTS urls (
-			id          BIGSERIAL    PRIMARY KEY,
+			id          UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
 			code        VARCHAR(20)  NOT NULL UNIQUE,
 			original_url TEXT        NOT NULL,
 			created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
@@ -66,7 +66,7 @@ func TestCreate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
-	if url.ID == 0 {
+	if url.ID == "" {
 		t.Error("expected ID to be set")
 	}
 	if url.CreatedAt.IsZero() {
@@ -156,7 +156,7 @@ func TestGetByID_NotFound(t *testing.T) {
 	cleanupURLs(t)
 	repo := NewPostgresURLRepository(testPool)
 
-	_, err := repo.GetByID(context.Background(), 999999)
+	_, err := repo.GetByID(context.Background(), "00000000-0000-0000-0000-000000000000")
 	if err == nil {
 		t.Fatal("expected error for missing ID, got nil")
 	}
@@ -188,7 +188,7 @@ func TestDelete_NotFound(t *testing.T) {
 	cleanupURLs(t)
 	repo := NewPostgresURLRepository(testPool)
 
-	err := repo.Delete(context.Background(), 999999)
+	err := repo.Delete(context.Background(), "00000000-0000-0000-0000-000000000000")
 	if err == nil {
 		t.Fatal("expected error for missing ID, got nil")
 	}
