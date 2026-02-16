@@ -110,7 +110,7 @@ func TestGetByCode_Success(t *testing.T) {
 		t.Fatalf("expected no error, got %v", err)
 	}
 	if result.ID != original.ID {
-		t.Errorf("expected ID %d, got %d", original.ID, result.ID)
+		t.Errorf("expected ID %s, got %s", original.ID, result.ID)
 	}
 	if result.Code != "find123" {
 		t.Errorf("expected code find123, got %s", result.Code)
