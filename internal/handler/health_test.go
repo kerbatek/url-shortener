@@ -1,4 +1,4 @@
-package handler_test
+package handler
 
 import (
 	"context"
@@ -8,18 +8,16 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-
-	"github.com/kerbatek/url-shortener/internal/handler"
 )
 
 type stubPinger struct{ err error }
 
 func (s *stubPinger) Ping(_ context.Context) error { return s.err }
 
-func setupHealthRouter(db handler.DBPinger) *gin.Engine {
+func setupHealthRouter(db DBPinger) *gin.Engine {
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
-	hh := handler.NewHealthHandler(db)
+	hh := NewHealthHandler(db)
 	r.GET("/health", hh.Liveness)
 	r.GET("/ready", hh.Readiness)
 	return r
