@@ -1,5 +1,8 @@
 # Build stage
-FROM golang:1.25-alpine AS builder
+FROM --platform=$BUILDPLATFORM golang:1.25-alpine AS builder
+
+ARG TARGETOS
+ARG TARGETARCH
 
 WORKDIR /build
 
@@ -7,7 +10,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
-RUN go build -o server ./cmd/server
+RUN GOOS=$TARGETOS GOARCH=$TARGETARCH go build -o server ./cmd/server
 
 # Runtime stage
 FROM alpine:3.21
