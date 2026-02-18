@@ -9,6 +9,7 @@ Handler (Gin) → Service (business logic) → Repository (PostgreSQL)
 ```
 
 - **Handler**: HTTP request/response handling
+- **Middleware**: Structured request logging via zerolog
 - **Service**: URL validation, short code generation (base62)
 - **Repository**: CRUD operations via pgxpool
 
@@ -42,7 +43,15 @@ curl -X DELETE http://localhost:8080/url/550e8400-e29b-41d4-a716-446655440000
 make docker-up
 ```
 
-Visit `http://localhost:8080` for the web UI.
+Starts the app, PostgreSQL, and the full logging stack (Loki, Promtail, Grafana).
+
+| Service | URL |
+|---------|-----|
+| App | http://localhost:8080 |
+| Grafana | http://localhost:3000 |
+| Loki | http://localhost:3100 |
+
+Grafana credentials: `admin` / `admin` (anonymous access also enabled).
 
 ### Local
 
@@ -82,9 +91,12 @@ DATABASE_URL="postgres://urlshortener:urlshortener@localhost:5432/urlshortener?s
 cmd/server/          # Application entrypoint
 internal/
   handler/           # HTTP handlers (Gin)
+  middleware/        # Gin middleware (structured logging)
   service/           # Business logic
   repository/        # Data access layer
-  model/             # Domain models
-migrations/          # SQL migration files
-static/              # Landing page (HTML/CSS/JS)
+    mocks/           # gomock-generated mocks
+  model/             # Domain models and config
+migrations/          # SQL migration files (auto-applied on startup)
+static/              # Web UI (HTML/CSS/JS)
+config/              # Loki, Promtail, and Grafana config files
 ```
