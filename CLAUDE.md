@@ -10,7 +10,8 @@ Go URL shortener service using Gin, PostgreSQL (pgxpool), and a 3-layer architec
 - `make build` — Build the binary
 - `make test` — Run unit tests
 - `make lint` — Run golangci-lint
-- `make docker-up` — Start app + Postgres + Loki + Promtail + Grafana via Docker Compose
+- `make docker-dev-up` — Build and start app + Postgres + Loki + Promtail + Grafana via Docker Compose
+- `make docker-prod-up` — Start using pre-built production image (docker-compose.prod.yml overlay)
 - `make docker-down` — Stop containers
 - `DATABASE_URL="postgres://urlshortener:urlshortener@localhost:5432/urlshortener?sslmode=disable" make test` — Run tests including integration tests
 
