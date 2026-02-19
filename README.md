@@ -1,6 +1,6 @@
 # URL Shortener
 
-A URL shortener service built with Go, Gin, and PostgreSQL.
+A self-hosted URL shortener built with Go, Gin, and PostgreSQL. Includes a simple web UI, structured JSON logging, and a full observability stack (Loki, Promtail, Grafana).
 
 ## Architecture
 
@@ -39,11 +39,17 @@ curl -X DELETE http://localhost:8080/url/550e8400-e29b-41d4-a716-446655440000
 
 ### Docker (recommended)
 
+**Development** — builds locally, hot-reloadable, includes full observability stack:
+
 ```bash
-make docker-up
+make docker-dev-up
 ```
 
-Starts the app, PostgreSQL, and the full logging stack (Loki, Promtail, Grafana).
+**Production** — uses pre-built image from registry:
+
+```bash
+make docker-prod-up
+```
 
 | Service | URL |
 |---------|-----|
